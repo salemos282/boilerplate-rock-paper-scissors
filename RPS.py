@@ -8,16 +8,16 @@ def counter(move):
     return "R"
 
 def player(prev_play, opponent_history=[], my_history=[], transition_table={}):
-    # Enregistrer le dernier coup de l'adversaire
+    
     if prev_play in ["R", "P", "S"]:
         opponent_history.append(prev_play)
 
-    # Premier coup
+    
     if not opponent_history:
         my_history.append("R")
         return "R"
 
-    # Mettre a jour la table de transitions
+    
     if len(my_history) > 0 and len(opponent_history) > 1:
         my_last = my_history[-1]
         opp_before = opponent_history[-2]
@@ -26,7 +26,7 @@ def player(prev_play, opponent_history=[], my_history=[], transition_table={}):
             transition_table[key] = {"R": 0, "P": 0, "S": 0}
         transition_table[key][prev_play] += 1
 
-    # Predire son prochain coup
+    
     if len(my_history) > 0:
         my_last = my_history[-1]
         opp_last = opponent_history[-1]
