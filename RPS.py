@@ -1,10 +1,47 @@
-# The example function below keeps track of the opponent's history and plays whatever the opponent played two plays ago. It is not a very good player so you will need to change the code to pass the challenge.
+# RPS.py
 
-def player(prev_play, opponent_history=[]):
-    opponent_history.append(prev_play)
+def counter(move):
+    if move == "R":
+        return "P"
+    if move == "P":
+        return "S"
+    return "R"
 
-    guess = "R"
-    if len(opponent_history) > 2:
-        guess = opponent_history[-2]
+def player(prev_play, opponent_history=[], my_history=[], transition_table={}):
+    # Enregistrer le dernier coup de l'adversaire
+    if prev_play in ["R", "P", "S"]:
+        opponent_history.append(prev_play)
 
-    return guess
+    # Premier coup
+    if not opponent_history:
+        my_history.append("R")
+        return "R"
+
+    # Mettre a jour la table de transitions
+    if len(my_history) > 0 and len(opponent_history) > 1:
+        my_last = my_history[-1]
+        opp_before = opponent_history[-2]
+        key = my_last + opp_before
+        if key not in transition_table:
+            transition_table[key] = {"R": 0, "P": 0, "S": 0}
+        transition_table[key][prev_play] += 1
+
+    # Predire son prochain coup
+    if len(my_history) > 0:
+        my_last = my_history[-1]
+        opp_last = opponent_history[-1]
+        key = my_last + opp_last
+        if key in transition_table:
+            next_counts = transition_table[key]
+            predicted_opp = max(next_counts, key=next_counts.get)
+        else:
+            counts = {"R": 0, "P": 0, "S": 0}
+            for m in opponent_history:
+                counts[m] += 1
+            predicted_opp = max(counts, key=counts.get)
+    else:
+        predicted_opp = "R"
+
+    my_move = counter(predicted_opp)
+    my_history.append(my_move)
+    return my_move
